@@ -55,6 +55,7 @@ type Logger struct {
 	maxLogSizeMB int64        // 最大日志文件大小（MB）
 	initOnce     sync.Once    // 确保初始化只执行一次
 	droppedLogs  int64        // 统计丢弃的日志数量（未使用）
+	async        bool         // 是否启用异步日志记录
 }
 
 // NewLogger 创建一个新的 Logger 实例
@@ -75,6 +76,14 @@ func (l *Logger) SetLogLevelStruct(level string) error {
 		return nil
 	}
 	return fmt.Errorf("invalid log level: %s", level) // 返回错误信息
+}
+
+// 是否开启异步
+func (l *Logger) SetAsync(async bool) {
+	l.async = async
+	if l.logger != nil {
+		l.logger.SetAsync(4096)
+	}
 }
 
 // Init 初始化日志记录器
@@ -98,7 +107,9 @@ func (l *Logger) InitStruct(logFilePath string) error {
 
 		// 移除标准日志标志，以便手动控制时间格式
 		l.logger = log.New(l.logFile, "", 0)
-		l.logger.SetAsync(4096)
+		if l.async {
+			l.logger.SetAsync(16384)
+		}
 		go l.monitorLogSize(logFilePath, l.maxLogSizeMB*1024*1024) // 启动日志文件大小监控
 	})
 	return initErr
@@ -322,6 +333,14 @@ func SetLogLevel(level string) error {
 // 设置最大日志文件大小（MB）
 func SetMaxLogSizeMB(maxSizeMB int) {
 	defaultLogger.SetMaxLogSizeMBStruct(maxSizeMB) // 调用内部的 SetMaxLogSizeMBStruct
+}
+
+// 是否启用异步
+func SetAsync(async bool) {
+	defaultLogger.SetAsync(async) // 调用内部的 SetAsync
+	if defaultLogger.logger != nil {
+		defaultLogger.logger.SetAsync(16384)
+	}
 }
 
 // 关闭日志系统
