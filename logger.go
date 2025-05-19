@@ -338,7 +338,7 @@ func SetMaxLogSizeMB(maxSizeMB int) {
 // 是否启用异步
 func SetAsync(async bool) {
 	defaultLogger.SetAsync(async) // 调用内部的 SetAsync
-	if defaultLogger.logger != nil {
+	if defaultLogger.logger != nil && async {
 		defaultLogger.logger.SetAsync(16384)
 	}
 }
