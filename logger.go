@@ -8,7 +8,6 @@ import (
 	"archive/tar"
 	"compress/gzip"
 	"fmt"
-	"io"
 
 	//"log"
 	"os"
@@ -18,6 +17,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/WJQSERVER-STUDIO/go-utils/copyb"
 	"github.com/WJQSERVER-STUDIO/go-utils/log"
 )
 
@@ -301,7 +301,7 @@ func (l *Logger) compressLog(srcPath string) error {
 		return err // 写入 tar 头部时的错误
 	}
 
-	if _, err := io.Copy(tarWriter, srcFile); err != nil {
+	if _, err := copyb.Copy(tarWriter, srcFile); err != nil {
 		return err // 复制文件内容时的错误
 	}
 
@@ -313,9 +313,12 @@ var defaultLogger = NewLogger()
 
 // 导出的全局函数，兼容原有函数名
 var (
-	Logw = Logf // 兼容原有快捷方式变量
-	logw = Logf
-	logf = Logf
+	Logw    = Logf // 兼容原有快捷方式变量
+	logw    = Logf
+	logf    = Logf
+	Print   = logf
+	Printf  = Logf
+	Println = Logf
 )
 
 // 导出全局函数，使用原有的函数名称，调用 defaultLogger 的方法
