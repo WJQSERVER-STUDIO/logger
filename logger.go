@@ -21,6 +21,21 @@ import (
 	"github.com/WJQSERVER-STUDIO/go-utils/log"
 )
 
+// 导出的全局函数，兼容原有函数名
+var (
+	Logw    = Logf // 兼容原有快捷方式变量
+	logw    = Logf
+	logf    = Logf
+	Print   = logf
+	Printf  = Logf
+	Println = Logf
+	Info    = LogInfo
+	Debug   = LogDebug
+	Warn    = LogWarning
+	Error   = LogError
+	Dump    = LogDump
+)
+
 // 常量定义
 const (
 	timeFormat = time.RFC3339 // 日志时间格式
@@ -310,16 +325,6 @@ func (l *Logger) compressLog(srcPath string) error {
 
 // 全局 Logger 实例
 var defaultLogger = NewLogger()
-
-// 导出的全局函数，兼容原有函数名
-var (
-	Logw    = Logf // 兼容原有快捷方式变量
-	logw    = Logf
-	logf    = Logf
-	Print   = logf
-	Printf  = Logf
-	Println = Logf
-)
 
 // 导出全局函数，使用原有的函数名称，调用 defaultLogger 的方法
 // 初始化和配置
